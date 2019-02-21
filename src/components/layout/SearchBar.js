@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
@@ -6,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
+import { createFriendRequest } from '../../store/actions/friendRequestActions';
 
 class SearchBar extends React.Component {
     state = {
@@ -30,9 +32,9 @@ class SearchBar extends React.Component {
         if(this.state.searchEmail){
             this.setState({
                 result: {
-                    userId: '7',
-                    userName: 'testing 7',
-                    userEmail: this.state.searchEmail,
+                    id: '7',
+                    username: 'testing 7',
+                    email: this.state.searchEmail,
                     status: "..."
                 }
             }, () => {
@@ -53,6 +55,11 @@ class SearchBar extends React.Component {
         });
     }
 
+    sendFriendRequest = () => {
+        this.props.createFriendRequest(this.state.result);
+        this.handleClose();
+    }
+
     render() {
         return (
             <Form inline>
@@ -66,14 +73,14 @@ class SearchBar extends React.Component {
                 </Container>
                 {this.state.result &&  <Modal show={this.state.showProfile} onHide={this.handleClose} centered>
                     <Modal.Header closeButton>
-                        <Modal.Title>{this.state.result.userName} ({this.state.result.userEmail})</Modal.Title>
+                        <Modal.Title>{this.state.result.username} ({this.state.result.email})</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>{this.state.result.status}</Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleClose}>
                             Close
                         </Button>
-                        <Button variant="success" onClick={this.handleClose}>
+                        <Button variant="success" onClick={this.sendFriendRequest}>
                             Add friend
                         </Button>
                     </Modal.Footer>
@@ -84,4 +91,10 @@ class SearchBar extends React.Component {
     }
 }
 
-export default SearchBar;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        createFriendRequest: (friendRequest) => dispatch(createFriendRequest(friendRequest))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(SearchBar);

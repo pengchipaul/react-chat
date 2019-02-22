@@ -20,11 +20,11 @@ class App extends Component {
                     <Switch>
                         <Route exact path="/" />
 
-                        /* Routes for auth */
+                        {/* Routes for auth */}
                         <Route path="/signin" component={SignIn} />
                         <Route path="/signup" component={SignUp} />
 
-                        /* Routes after signed in */
+                        {/* Routes after signed in */}
                         <Route path="/profile" component={ProfileContainer} />
                         <Route path="/dashboard" component={Dashboard}/>
                         <Route path="/friends" component={FriendContainer} />

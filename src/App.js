@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
-import SignedInLinks from './components/layout/SignedInLinks';
+import AppNavBar from './components/layout/AppNavBar';
 import ProfileContainer from './components/Profile/ProfileContainer';
 import Dashboard from './components/dashboard/Dashboard';
 import FriendContainer from './components/Friend/FriendContainer';
@@ -16,7 +16,7 @@ class App extends Component {
 
             <BrowserRouter>
                 <div className="App">
-                    <SignedInLinks/>
+                    <AppNavBar/>
                     <Switch>
                         <Route exact path="/" />
 

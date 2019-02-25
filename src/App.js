@@ -1,6 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './App.css';
-import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 import AppNavBar from './components/layout/AppNavBar';
 import ProfileContainer from './components/Profile/ProfileContainer';
 import Dashboard from './components/dashboard/Dashboard';
@@ -16,20 +17,20 @@ class App extends Component {
 
             <BrowserRouter>
                 <div className="App">
-                    <AppNavBar/>
+                    <AppNavBar />
                     <Switch>
                         <Route exact path="/" />
 
                         {/* Routes for auth */}
-                        <Route path="/signin" component={SignIn} />
-                        <Route path="/signup" component={SignUp} />
+                        <GuestRoute path="/signin" component={SignIn} auth={this.props.auth}/>
+                        <GuestRoute path="/signup" component={SignUp} auth={this.props.auth}/>
 
                         {/* Routes after signed in */}
-                        <Route path="/profile" component={ProfileContainer} />
-                        <Route path="/dashboard" component={Dashboard}/>
-                        <Route path="/friends" component={FriendContainer} />
-                        <Route path="/groups" component={GroupContainer} />
-                        <Route path="/notifications" component={Notifications} />
+                        <SignedInRoute path="/profile" component={ProfileContainer} auth={this.props.auth} />
+                        <SignedInRoute path="/dashboard" component={Dashboard} auth={this.props.auth} />
+                        <SignedInRoute path="/friends" component={FriendContainer} auth={this.props.auth} />
+                        <SignedInRoute path="/groups" component={GroupContainer} auth={this.props.auth} />
+                        <SignedInRoute path="/notifications" component={Notifications} auth={this.props.auth} />
                     </Switch>
                 </div>
             </BrowserRouter>
@@ -38,4 +39,18 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        auth: state.firebase.auth
+    }
+}
+
+const GuestRoute = ({ component: Component, auth , ...rest }) => (
+    <Route {...rest} render={props => auth.uid ? (<Redirect to="/dashboard" />) : (<Component {...props} />)} />
+);
+
+const SignedInRoute = ({ component: Component, auth , ...rest }) => (
+    <Route {...rest} render={props => auth.uid ? (<Component {...props} />) : (<Redirect to="/signin" />) } />
+);
+
+export default connect(mapStateToProps)(App);

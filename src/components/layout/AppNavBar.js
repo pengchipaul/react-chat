@@ -31,20 +31,20 @@ class AppNavBar extends React.Component {
         const guestLinks = <React.Fragment>
         <NavBar.Toggle aria-controls="guest-links" />
                 <NavBar.Collapse id="guest-links">
-                    <Nav className="mr-auto">
+                    <Nav className="ml-auto">
                         <Link className="nav-link" to="/signin">Sign in</Link>
                         <Link className="nav-link" to="/signup">Sign up</Link>
                     </Nav>
                 </NavBar.Collapse>
         </React.Fragment>
         
-        const displayLinks = this.props.auth.isEmpty ? guestLinks : signedInLinks;
+        const displayLinks = this.props.auth.uid ? signedInLinks : guestLinks;
 
         return (
             <div className="AppBar">
                 <NavBar bg="dark" expand="lg" variant="dark" stick="top">
                     <Link to="/" className={"navbar-brand"}>PA Chat</Link>
-                    {this.props.auth && displayLinks}
+                    {displayLinks}
 
                     
                 </NavBar>
@@ -54,7 +54,6 @@ class AppNavBar extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state.firebase);
     return {
         auth: state.firebase.auth
     }

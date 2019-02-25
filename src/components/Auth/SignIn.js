@@ -13,7 +13,8 @@ import { signIn } from '../../store/actions/authActions';
 class SignIn extends React.Component {
     state = {
         email: '',
-        password: ''
+        password: '',
+        isLoading: false
     }
 
     handleChange = (e) => {
@@ -23,8 +24,20 @@ class SignIn extends React.Component {
     }
 
     login = (e) => {
+        this.setState({
+            isLoading: true
+        })
         e.preventDefault();
-        this.props.signIn(this.state);
+        var credentials = {
+            email: this.state.email,
+            password: this.state.password
+        }
+        this.props.signIn(credentials);
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 1000);
     }
 
     render() {
@@ -51,7 +64,7 @@ class SignIn extends React.Component {
                                             </InputGroup>
                                         </Form.Group>
                                     }
-                                    <Button variant="primary" type="submit" block>Log in</Button>
+                                    <Button variant="primary" type="submit" disabled={this.state.isLoading} block>Log in</Button>
                                 </Form>
                             </Card.Body>
 

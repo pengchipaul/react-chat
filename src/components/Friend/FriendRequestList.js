@@ -6,9 +6,10 @@ function FriendRequestList(props) {
     const requestList = props.requestList;
     const requests = requestList.map((request) => {
         return (
-            <ListGroup.Item key={request.id}><b>{request.senderName}</b> ({request.email}) sent you a friend
+            <ListGroup.Item key={request.id}><b>(username)</b> (user email) sent you a friend
                 request!
-                <hr/>
+                <hr />
+                <p>Message: {request.message}</p>
                 <Button variant="success" size="sm">Accept</Button>
                 <Button variant="danger" size="sm">Decline</Button>
             </ListGroup.Item>

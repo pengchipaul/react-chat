@@ -5,6 +5,8 @@ import Col from 'react-bootstrap/Col';
 import FriendList from './FriendList';
 import FriendRequestList from "./FriendRequestList";
 import { connect } from "react-redux";
+import { firestoreConnect } from 'react-redux-firebase';
+import { compose } from 'redux';
 
 class FriendContainer extends React.Component {
 
@@ -16,8 +18,8 @@ class FriendContainer extends React.Component {
                 Friend Page
                 <Container fluid>
                     <Row>
-                        <Col md={{span: 12}} lg={{span: 5, offset: 1}}> <FriendList friendList={friends} /> </Col>
-                        <Col md={{span: 12}} lg={{span: 4, offset: 1}} className="mt-lg-0 mt-sm-5"> <FriendRequestList requestList={friendRequests} /> </Col>
+                        <Col md={{span: 12}} lg={{span: 5, offset: 1}}> {friends && <FriendList friendList={friends} />}  </Col>
+                        <Col md={{span: 12}} lg={{span: 4, offset: 1}} className="mt-lg-0 mt-sm-5"> {this.props.friendRequests && <FriendRequestList requestList={this.props.friendRequests} />}  </Col>
                     </Row>
                 </Container>
             </div>
@@ -27,9 +29,18 @@ class FriendContainer extends React.Component {
 
 function mapStateToProps(state) {
     return {
+        auth: state.firebase.auth,
         friends: state.friend.friends,
-        friendRequests: state.friendRequest.friendRequests
+        friendRequests: state.firestore.ordered.friendRequests
     }
 }
 
-export default connect(mapStateToProps)(FriendContainer);
+export default compose(
+    connect(mapStateToProps),
+    firestoreConnect(props => [
+        {
+            collection: 'users/' + props.auth.uid + '/friendRequests',
+            storeAs: 'friendRequests'
+        }
+    ])
+) (FriendContainer);

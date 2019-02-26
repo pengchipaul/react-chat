@@ -24,3 +24,7 @@ yarn-error.log*
 
 # ide
 /.idea
+
+# hosting cache
+/.firebase
+.firebaserc

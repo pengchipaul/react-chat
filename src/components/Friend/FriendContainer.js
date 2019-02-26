@@ -19,7 +19,7 @@ class FriendContainer extends React.Component {
                 <Container fluid>
                     <Row>
                         <Col md={{span: 12}} lg={{span: 5, offset: 1}}> {friends && <FriendList friendList={friends} />}  </Col>
-                        <Col md={{span: 12}} lg={{span: 4, offset: 1}} className="mt-lg-0 mt-sm-5"> {this.props.friendRequests && <FriendRequestList requestList={this.props.friendRequests} />}  </Col>
+                        <Col md={{span: 12}} lg={{span: 4, offset: 1}} className="mt-lg-0 mt-sm-5"> {friendRequests && <FriendRequestList requestList={friendRequests} />}  </Col>
                     </Row>
                 </Container>
             </div>

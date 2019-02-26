@@ -1,13 +1,24 @@
 const initState = {
     userFound: null,
-    isSearching: false
+    isSearching: false,
+    error: null
 };
 
 function friendRequestReducer(state = initState, action) {
     switch (action.type) {
         case "CREATE_FRIEND_REQUEST":
-            console.log("friend request sent", action.friendRequest);
-            return state;
+            console.log("friend request sent");
+            return {
+                ...state,
+                error: null
+            }
+        case "CREATE_FRIEND_REQUEST_ERROR":
+            console.log("failed to send friend request");
+            console.log(action.error);
+            return {
+                ...state,
+                error: action.error
+            }
         case "START_SEARCHING":
             return {
                 ...state,

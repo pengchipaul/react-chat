@@ -2,9 +2,23 @@ export const createFriendRequest = (friendRequest) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         const firebase = getFirebase();
         const firestore = getFirestore();
-        console.log(friendRequest);
-        console.log(firebase.auth().currentUser.uid);
-        dispatch({ type: 'CREATE_FRIEND_REQUEST', friendRequest })
+        const currentUserUid = firebase.auth().currentUser.uid;
+        firestore.collection('users').doc(currentUserUid).get()
+            .then((res) => {
+                const currentUser = res.data();
+                return firestore.collection('users').doc(friendRequest.uid).collection('friendRequests').doc(currentUserUid).set({
+                    message: friendRequest.message,
+                    username: currentUser.username,
+                    email: currentUser.email
+                })
+            })
+            .then(() => {
+                dispatch({ type: 'CREATE_FRIEND_REQUEST', friendRequest });
+            })
+            .catch((error) => {
+                dispatch({ type: 'CREATE_FRIEND_REQUEST_ERROR', error: error });
+            });
+
     }
 }
 

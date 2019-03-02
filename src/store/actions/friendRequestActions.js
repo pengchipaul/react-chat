@@ -5,11 +5,9 @@ export const createFriendRequest = (friendRequest) => {
         const currentUserUid = firebase.auth().currentUser.uid;
         firestore.collection('users').doc(currentUserUid).get()
             .then((res) => {
-                const currentUser = res.data();
                 return firestore.collection('users').doc(friendRequest.uid).collection('friendRequests').doc(currentUserUid).set({
                     message: friendRequest.message,
-                    username: currentUser.username,
-                    email: currentUser.email
+                    createdAt: new Date()
                 })
             })
             .then(() => {
@@ -19,6 +17,39 @@ export const createFriendRequest = (friendRequest) => {
                 dispatch({ type: 'CREATE_FRIEND_REQUEST_ERROR', error: error });
             });
 
+    }
+}
+
+export const acceptFriendRequest = (requestId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+        const currentUserUid = firebase.auth().currentUser.uid;
+        firestore.collection('users').doc(currentUserUid).collection('friends').doc(requestId).set({
+            lastMessage: "Now let's start chat",
+            createdAt: new Date()
+        }).then(() => {
+            firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(requestId).delete();
+        }).then(() => {
+            dispatch({ type: 'ACCEPT_FRIEND_REQUEST_SUCCESS' });
+        }).catch((error) => {
+            dispatch({ type: 'ACCEPT_FRIEND_REQUEST_ERROR', error: error });
+        });
+    }
+}
+
+export const deleteFriendRequest = (requestId) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+        const currentUserUid = firebase.auth().currentUser.uid;
+
+        firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(requestId).delete()
+            .then(() => {
+                dispatch({ type: 'DELETE_FRIEND_REQUEST_SUCCESS' });
+            }).catch((error) => {
+                dispatch({ type: 'DELETE_FRIEND_REQUEST_ERROR', error: error });
+            });
     }
 }
 

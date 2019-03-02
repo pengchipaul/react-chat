@@ -45,6 +45,18 @@ function friendRequestReducer(state = initState, action) {
                 userFound: null,
                 isSearching: false
             }
+        case "ACCEPT_FRIEND_REQUEST_SUCCESS":
+            console.log("friend request accepted");
+            return state;
+        case "ACCEPT_FRIEND_REQUEST_ERROR":
+            console.log("accept friend request error: ", action.error);
+            return state;
+        case "DELETE_FRIEND_REQUEST_SUCCESS":
+            console.log("friend request deleted");
+            return state;
+        case "DELETE_FRIEND_REQUEST_ERROR":
+            console.log("delete friend request error: ", action.error);
+            return state;
         default:
             return state;
     }

@@ -1,27 +1,36 @@
 import React from 'react';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
+import { connect } from 'react-redux';
+import { ListGroup } from 'react-bootstrap';
 
-function FriendList(props) {
-    const friendList = props.friendList;
+class FriendList extends React.Component {
 
-    return (
-        <div className="friend-list">
-            {friendList && friendList.map((friend) => {
-                return (
-                    <Card key={friend.id}>
-                        <Card.Header as="h5">{friend.username}</Card.Header>
-                        <Card.Body>
-                            <Card.Title>{friend.email}</Card.Title>
-                            <Card.Text>{friend.status}</Card.Text>
-                            <Button variant='success'>Chat</Button>
-                        </Card.Body>
-                    </Card>
-                )
-            })
-            }
-        </div>
-    )
+    render() {
+        return (
+            <div className="friend-list friend-list-bg">
+                <ListGroup>
+                    {this.props.friends.map((friend) => {
+                        return (
+                            <ListGroup.Item key={friend.id} className="text-left">
+                                <strong>{friend.username} ({friend.email})</strong>
+                                <br></br>
+                                <span><small>{friend.lastMessage}</small></span>
+                            </ListGroup.Item>
+
+                        )
+                    })
+                    }
+                </ListGroup>
+
+            </div>
+        )
+    }
+
 }
 
-export default FriendList;
+const mapStateToProps = (state) => {
+    return {
+        friends: state.friend.friends
+    }
+}
+
+export default connect(mapStateToProps)(FriendList);

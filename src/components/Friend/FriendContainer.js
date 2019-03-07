@@ -7,18 +7,37 @@ import FriendRequestList from "./FriendRequestList";
 import { connect } from "react-redux";
 import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
+import { showFriendRequests } from '../../store/actions/friendRequestActions';
+import { showFriends } from '../../store/actions/friendActions';
+import '../../css/friend.css';
 
 class FriendContainer extends React.Component {
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.friendRequests !== prevProps.friendRequests) {
+            this.props.showFriendRequests(this.props.friendRequests);
+        }
+        if (this.props.friends !== prevProps.friends) {
+            this.props.showFriends(this.props.friends);
+        }
+    }
+
     render() {
-        const { friends } = this.props;
-        const { friendRequests } = this.props;
         return (
             <div>
-                Friend Page
                 <Container fluid>
                     <Row>
-                        <Col md={{ span: 12 }} lg={{ span: 5, offset: 1 }}> {friends && <FriendList friendList={friends} />}  </Col>
-                        <Col md={{ span: 12 }} lg={{ span: 4, offset: 1 }} className="mt-lg-0 mt-sm-5"> {friendRequests && <FriendRequestList requestList={friendRequests} />}  </Col>
+                        <Col md={{ span: 12 }} lg={{ span: 3 }} className="friend-list-bg pt-2 pl-0 pr-0" style={{minHeight: "100vh"}}>
+                            {this.props.friendsAreLoaded &&
+                                this.props.friends.length !== 0 &&
+                                <FriendList/>}
+                        </Col>
+                        <Col md={{ span: 12 }} lg={{ span: 6 }}> Friend Chat Section </Col>
+                        <Col md={{ span: 12 }} lg={{ span: 3 }} className="mt-lg-0 mt-sm-5 pl-0 pr-0 pl-md-2 pr-md-2">
+                            {this.props.requestsAreLoaded &&
+                                this.props.friendRequests.length !== 0 &&
+                                <FriendRequestList/>}
+                        </Col>
                     </Row>
                 </Container>
             </div>
@@ -26,23 +45,36 @@ class FriendContainer extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
 
     return {
         auth: state.firebase.auth,
-        friends: state.friend.friends,
-        friendRequests: state.firestore.ordered.friendRequests
+        friends: state.firestore.ordered.friends,
+        friendRequests: state.firestore.ordered.friendRequests,
+        requestsAreLoaded: state.friendRequest.isLoaded,
+        friendsAreLoaded: state.friend.isLoaded
     }
 
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        showFriends: (friendList) => dispatch(showFriends(friendList)),
+        showFriendRequests: (requestList) => dispatch(showFriendRequests(requestList))
+    }
+}
+
 
 export default compose(
-    connect(mapStateToProps),
+    connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect(props => [
         {
             collection: 'users/' + props.auth.uid + '/friendRequests',
             storeAs: 'friendRequests'
+        },
+        {
+            collection: 'users/' + props.auth.uid + '/friends',
+            storeAs: 'friends'
         }
     ])
 )(FriendContainer);

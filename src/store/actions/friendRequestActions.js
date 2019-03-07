@@ -22,12 +22,18 @@ export const createFriendRequest = (friendRequest) => {
 
 export const acceptFriendRequest = (requestId) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
-        const firebase = getFirebase();
         const firestore = getFirestore();
-        const currentUserUid = firebase.auth().currentUser.uid;
+        console.log(getState());
+        const currentUser = getState().firebase.profile;
+        const currentUserUid = getFirebase().auth().currentUser.uid;
         firestore.collection('users').doc(currentUserUid).collection('friends').doc(requestId).set({
             lastMessage: "Now let's start chat",
             createdAt: new Date()
+        }).then(() => {
+            firestore.collection('users').doc(requestId).collection('friends').doc(currentUserUid).set({
+                lastMessage: currentUser.username + " has accepted your friend request",
+                createdAt: new Date()
+            });
         }).then(() => {
             firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(requestId).delete();
         }).then(() => {
@@ -50,6 +56,36 @@ export const deleteFriendRequest = (requestId) => {
             }).catch((error) => {
                 dispatch({ type: 'DELETE_FRIEND_REQUEST_ERROR', error: error });
             });
+    }
+}
+
+export const showFriendRequests = (requestList) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firestore = getFirestore();
+        let friendRequests = [];
+        var totalRequests = requestList.length;
+        if (totalRequests === 0) {
+            dispatch({ type: 'SHOW_FRIEND_REQUESTS', data: [] });
+        } else {
+            requestList.forEach((request) => {
+                var username, email;
+                firestore.collection('users').doc(request.id).get().then((res) => {
+                    username = res.data().username;
+                    email = res.data().email;
+                    friendRequests.push({
+                        id: request.id,
+                        username: username,
+                        email: email,
+                        message: request.message
+                    });
+                    totalRequests--;
+                    if (totalRequests === 0) {
+                        dispatch({ type: 'SHOW_FRIEND_REQUESTS', data: friendRequests });
+                    }
+                });
+            });
+        }
+
     }
 }
 

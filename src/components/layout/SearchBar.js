@@ -60,7 +60,7 @@ class SearchBar extends React.Component {
                 <Container>
                     <Row className="justify-content-center">
                         <Col>
-                            <FormControl type="text" id="searchEmail" placeholder="Search" className="mr-sm-2" value={this.state.searchEmail} onChange={this.handleChange} />
+                            <FormControl type="text" id="searchEmail" placeholder="Enter email" className="mr-sm-2" value={this.state.searchEmail} onChange={this.handleChange} />
                             <Button variant="outline-info" onClick={this.searchUserByEmail}>
                                 {this.props.isSearching ? "Searching..." : "Search"}
                             </Button>
@@ -80,7 +80,7 @@ class SearchBar extends React.Component {
                     </Modal.Header>
                     {this.props.userFound &&
                         <Modal.Body>
-                        {this.props.userFound.status}
+                        Status: {this.props.userFound.status}
                             <Form.Control className="mt-2" type="text" placeholder="enter your message" id="message" value={this.state.message} onChange={this.handleChange} />
                         </Modal.Body>
                     }

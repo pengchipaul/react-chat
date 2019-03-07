@@ -1,6 +1,8 @@
 const initState = {
     userFound: null,
     isSearching: false,
+    friendRequests: null,
+    isLoaded: false,
     error: null
 };
 
@@ -57,6 +59,13 @@ function friendRequestReducer(state = initState, action) {
         case "DELETE_FRIEND_REQUEST_ERROR":
             console.log("delete friend request error: ", action.error);
             return state;
+        case "SHOW_FRIEND_REQUESTS":
+            console.log("friend requests rendered");
+            return {
+                ...state,
+                friendRequests: action.data,
+                isLoaded: true
+            }
         default:
             return state;
     }

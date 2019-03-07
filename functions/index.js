@@ -14,7 +14,7 @@ admin.initializeApp(functions.config().firebase);
  * Friends and Friend Requests related functions
  */
 
-exports.onFriendCreated = functions.firestore.document('users/{userId}/friends/{friendId}')
+/* exports.onFriendCreated = functions.firestore.document('users/{userId}/friends/{friendId}')
     .onCreate((snap, context) => {
         return admin.firestore().collection("users").doc(context.params.userId).get()
             .then((res) => {
@@ -28,4 +28,4 @@ exports.onFriendCreated = functions.firestore.document('users/{userId}/friends/{
                 console.log("create friend error: ", error);
             })
 
-    });
+    }); */

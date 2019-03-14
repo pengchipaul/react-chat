@@ -6,28 +6,31 @@ import { connect } from 'react-redux';
 
 class FriendRequestList extends React.Component {
 
-    acceptFriendRequest = (requestId) => {
-        this.props.acceptFriendRequest(requestId);
+    acceptFriendRequest = (request) => {
+        this.props.acceptFriendRequest(request);
     }
 
-    deleteFriendRequest = (requestId) => {
-        this.props.deleteFriendRequest(requestId);
+    deleteFriendRequest = (request) => {
+        this.props.deleteFriendRequest(request);
     }
 
     render() {
         let requests;
-        requests = this.props.friendRequests.map((request) => {
-            return (
-                <ListGroup.Item key={request.id}><b>{request.username}</b> ({request.email}) sent you a friend
-                    request!
+        if (this.props.requestList) {
+            requests = this.props.requestList.map((request) => {
+                return (
+                    <ListGroup.Item key={request.id}><b>{request.username}</b> ({request.email}) sent you a friend
+                        request!
                 <hr />
-                    <p>Message: {request.message}</p>
-                    <Button variant="success" size="sm" onClick={() => this.acceptFriendRequest(request.id)}>Accept</Button>
-                    <Button variant="danger" size="sm" onClick={() => this.deleteFriendRequest(request.id)}>Decline</Button>
-                </ListGroup.Item>
-            )
+                        <p>Message: {request.message}</p>
+                        <Button variant="success" size="sm" onClick={() => this.acceptFriendRequest(request)}>Accept</Button>
+                        <Button variant="danger" size="sm" onClick={() => this.deleteFriendRequest(request)}>Decline</Button>
+                    </ListGroup.Item>
+                )
 
-        });
+            });
+        }
+
 
         return (
             <div className="request-list">
@@ -42,18 +45,11 @@ class FriendRequestList extends React.Component {
 
 }
 
-const mapStateToProps = (state) => {
-    return {
-        friendRequests: state.friendRequest.friendRequests,
-        isLoaded: state.friendRequest.isLoaded
-    }
-}
-
 const mapDispatchToProps = (dispatch) => {
     return {
-        acceptFriendRequest: (requestId) => dispatch(acceptFriendRequest(requestId)),
-        deleteFriendRequest: (requestId) => dispatch(deleteFriendRequest(requestId))
+        acceptFriendRequest: (request) => dispatch(acceptFriendRequest(request)),
+        deleteFriendRequest: (request) => dispatch(deleteFriendRequest(request))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FriendRequestList);
+export default connect(null, mapDispatchToProps)(FriendRequestList);

@@ -7,11 +7,13 @@ export const createFriendRequest = (friendRequest) => {
             .then((res) => {
                 return firestore.collection('users').doc(friendRequest.uid).collection('friendRequests').doc(currentUserUid).set({
                     message: friendRequest.message,
+                    username: friendRequest.username,
+                    email: friendRequest.email,
                     createdAt: new Date()
                 })
             })
             .then(() => {
-                dispatch({ type: 'CREATE_FRIEND_REQUEST', friendRequest });
+                dispatch({ type: 'CREATE_FRIEND_REQUEST' });
             })
             .catch((error) => {
                 dispatch({ type: 'CREATE_FRIEND_REQUEST_ERROR', error: error });
@@ -20,22 +22,26 @@ export const createFriendRequest = (friendRequest) => {
     }
 }
 
-export const acceptFriendRequest = (requestId) => {
+export const acceptFriendRequest = (request) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         const firestore = getFirestore();
         console.log(getState());
         const currentUser = getState().firebase.profile;
         const currentUserUid = getFirebase().auth().currentUser.uid;
-        firestore.collection('users').doc(currentUserUid).collection('friends').doc(requestId).set({
-            lastMessage: "Now let's start chat",
+        firestore.collection('users').doc(currentUserUid).collection('friends').doc(request.id).set({
+            lastMessage: "Let's start chat",
+            username: request.username,
+            email: request.email,
             createdAt: new Date()
         }).then(() => {
-            firestore.collection('users').doc(requestId).collection('friends').doc(currentUserUid).set({
-                lastMessage: currentUser.username + " has accepted your friend request",
+            firestore.collection('users').doc(request.id).collection('friends').doc(currentUserUid).set({
+                lastMessage: "Let's start chat",
+                username: currentUser.username,
+                email: currentUser.email,
                 createdAt: new Date()
             });
         }).then(() => {
-            firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(requestId).delete();
+            firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(request.id).delete();
         }).then(() => {
             dispatch({ type: 'ACCEPT_FRIEND_REQUEST_SUCCESS' });
         }).catch((error) => {
@@ -44,48 +50,18 @@ export const acceptFriendRequest = (requestId) => {
     }
 }
 
-export const deleteFriendRequest = (requestId) => {
+export const deleteFriendRequest = (request) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         const firebase = getFirebase();
         const firestore = getFirestore();
         const currentUserUid = firebase.auth().currentUser.uid;
 
-        firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(requestId).delete()
+        firestore.collection('users').doc(currentUserUid).collection('friendRequests').doc(request.id).delete()
             .then(() => {
                 dispatch({ type: 'DELETE_FRIEND_REQUEST_SUCCESS' });
             }).catch((error) => {
                 dispatch({ type: 'DELETE_FRIEND_REQUEST_ERROR', error: error });
             });
-    }
-}
-
-export const showFriendRequests = (requestList) => {
-    return (dispatch, getState, { getFirebase, getFirestore }) => {
-        const firestore = getFirestore();
-        let friendRequests = [];
-        var totalRequests = requestList.length;
-        if (totalRequests === 0) {
-            dispatch({ type: 'SHOW_FRIEND_REQUESTS', data: [] });
-        } else {
-            requestList.forEach((request) => {
-                var username, email;
-                firestore.collection('users').doc(request.id).get().then((res) => {
-                    username = res.data().username;
-                    email = res.data().email;
-                    friendRequests.push({
-                        id: request.id,
-                        username: username,
-                        email: email,
-                        message: request.message
-                    });
-                    totalRequests--;
-                    if (totalRequests === 0) {
-                        dispatch({ type: 'SHOW_FRIEND_REQUESTS', data: friendRequests });
-                    }
-                });
-            });
-        }
-
     }
 }
 

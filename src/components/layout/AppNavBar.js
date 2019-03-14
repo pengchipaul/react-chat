@@ -22,7 +22,7 @@ class AppNavBar extends React.Component {
                     <Link className="nav-link" to="/groups">Groups</Link>
                     <Link className="nav-link" to="/profile">Profile</Link>
                 </Nav>
-                <Link className="nav-link btn btn-primary text-white mr-lg-2 mb-md-2 mr-sm-0 mb-lg-0 mb-md-0 mb-2" to="/notifications">Notifications
+                <Link className="nav-link btn btn-primary text-white mr-lg-2 mb-md-2 mr-sm-0 mb-lg-0 mb-md-0 mb-2 d-none" to="/notifications">Notifications
                             <Badge className="ml-2" variant="light">5</Badge>
                     <span className="sr-only">unread messages</span>
                 </Link>

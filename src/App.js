@@ -18,7 +18,8 @@ class App extends Component {
             <BrowserRouter>
                 <div className="App">
                     <AppNavBar />
-                    <Switch>
+                    <div>
+                        <Switch>
                         <Route exact path="/" />
 
                         {/* Routes for auth */}
@@ -32,6 +33,8 @@ class App extends Component {
                         <SignedInRoute path="/groups" component={GroupContainer} auth={this.props.auth} />
                         <SignedInRoute path="/notifications" component={Notifications} auth={this.props.auth} />
                     </Switch>
+                    </div>
+                    
                 </div>
             </BrowserRouter>
 

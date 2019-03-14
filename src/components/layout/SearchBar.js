@@ -36,11 +36,13 @@ class SearchBar extends React.Component {
         if (this.props.userFound.uid === this.props.auth.uid) {
             return;
         }
-        const receiver = {
+        const friendRequest = {
             uid: this.props.userFound.uid,
+            username: this.props.profile.username,
+            email: this.props.profile.email,
             message: this.state.message
         }
-        this.props.createFriendRequest(receiver);
+        this.props.createFriendRequest(friendRequest);
         this.handleClose();
     }
 
@@ -107,7 +109,8 @@ const mapStateToProps = (state) => {
     return {
         isSearching: state.friendRequest.isSearching,
         userFound: state.friendRequest.userFound,
-        auth: state.firebase.auth
+        auth: state.firebase.auth,
+        profile: state.firebase.profile
     }
 }
 

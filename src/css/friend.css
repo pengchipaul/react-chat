@@ -1,3 +1,26 @@
 .friend-list-bg {
     background-color: #F3F7FB;
 }
+
+.friend-chat-input {
+    width: 100%;
+    height: 40px;
+    position: absolute;
+    bottom: 0;
+}
+
+.chat-message {
+    font-size: 22px;
+}
+
+.chat-timestamp {
+    font-size: 10px;
+}
+
+.message-container {
+    display: inline-block;
+}
+
+.friend-page-section {
+    overflow-y: auto;
+}

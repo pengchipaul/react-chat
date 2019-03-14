@@ -3,40 +3,49 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FriendList from './FriendList';
+import FriendChat from './FriendChat';
 import FriendRequestList from "./FriendRequestList";
 import { connect } from "react-redux";
 import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
-import { showFriendRequests } from '../../store/actions/friendRequestActions';
-import { showFriends } from '../../store/actions/friendActions';
 import '../../css/friend.css';
 
 class FriendContainer extends React.Component {
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.friendRequests !== prevProps.friendRequests) {
-            this.props.showFriendRequests(this.props.friendRequests);
-        }
-        if (this.props.friends !== prevProps.friends) {
-            this.props.showFriends(this.props.friends);
-        }
+    state = {
+        windowHeight: null,
+        sectionHeight: null
     }
 
-    render() {
+    componentDidMount() {
+        const BAR_HEIGHT = 56;
+        if (window.innerWidth <= 576) {
+            this.setState({
+                sectionHeight: window.innerHeight
+            })
+        } else {
+            this.setState({
+                sectionHeight: window.innerHeight - BAR_HEIGHT
+            })
+        }
+        this.setState({
+            windowHeight: window.innerHeight - BAR_HEIGHT
+        });
+    }
+
+    render() { 
         return (
             <div>
                 <Container fluid>
                     <Row>
-                        <Col md={{ span: 12 }} lg={{ span: 3 }} className="friend-list-bg pt-2 pl-0 pr-0" style={{minHeight: "100vh"}}>
-                            {this.props.friendsAreLoaded &&
-                                this.props.friends.length !== 0 &&
-                                <FriendList/>}
+                        <Col md={{ span: 12 }} lg={{ span: 3 }} className="friend-page-section friend-list-bg pt-2 pl-0 pr-0" style={{ height: this.state.windowHeight }}>
+                            {this.props.friends &&
+                                <FriendList friendList={this.props.friends} />}
                         </Col>
-                        <Col md={{ span: 12 }} lg={{ span: 6 }}> Friend Chat Section </Col>
-                        <Col md={{ span: 12 }} lg={{ span: 3 }} className="mt-lg-0 mt-sm-5 pl-0 pr-0 pl-md-2 pr-md-2">
-                            {this.props.requestsAreLoaded &&
-                                this.props.friendRequests.length !== 0 &&
-                                <FriendRequestList/>}
+                        <Col id="friend-chat-section" md={{ span: 12 }} lg={{ span: 6 }} className="friend-page-section pt-2 pl-0 pr-0" style={{ height: this.state.sectionHeight }}> {this.props.selectedChat && <FriendChat friends={this.props.friends}
+                             />} </Col>
+                        <Col md={{ span: 12 }} lg={{ span: 3 }} className="friend-page-section pt-2 pl-0 pr-0 pl-md-2 pr-md-2" style={{ height: this.state.sectionHeight }}>
+                            {this.props.friendRequests &&
+                                <FriendRequestList requestList={this.props.friendRequests} />}
                         </Col>
                     </Row>
                 </Container>
@@ -51,22 +60,16 @@ const mapStateToProps = (state) => {
         auth: state.firebase.auth,
         friends: state.firestore.ordered.friends,
         friendRequests: state.firestore.ordered.friendRequests,
-        requestsAreLoaded: state.friendRequest.isLoaded,
-        friendsAreLoaded: state.friend.isLoaded
+        friendChats: state.firestore.ordered.friendChats,
+        selectedChat: state.friendChat.selectedChat
     }
 
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        showFriends: (friendList) => dispatch(showFriends(friendList)),
-        showFriendRequests: (requestList) => dispatch(showFriendRequests(requestList))
-    }
-}
 
 
 export default compose(
-    connect(mapStateToProps, mapDispatchToProps),
+    connect(mapStateToProps),
     firestoreConnect(props => [
         {
             collection: 'users/' + props.auth.uid + '/friendRequests',

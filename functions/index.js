@@ -14,18 +14,16 @@ admin.initializeApp(functions.config().firebase);
  * Friends and Friend Requests related functions
  */
 
-/* exports.onFriendCreated = functions.firestore.document('users/{userId}/friends/{friendId}')
+ /* generate default initial chat message */
+exports.onFriendCreated = functions.firestore.document('users/{userId}/friends/{friendId}')
     .onCreate((snap, context) => {
-        return admin.firestore().collection("users").doc(context.params.userId).get()
-            .then((res) => {
-                const username = res.data().username;
-                admin.firestore().collection("users").doc(context.params.friendId).collection('friends').doc(context.params.userId).set({
-                    lastMessage: username + " has accepted your friend request",
-                    createdAt: new Date()
-                })
-            })
+        return admin.firestore().collection("users").doc(context.params.userId).collection('friends').doc(context.params.friendId).collection('chats').add({
+            content: "Let's start chat",
+            userId: context.params.friendId,
+            createdAt: new Date()
+        })
             .catch((error) => {
-                console.log("create friend error: ", error);
+                console.log("generate initial chat message error: ", error);
             })
 
-    }); */
+    });

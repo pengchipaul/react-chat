@@ -20,9 +20,17 @@ export const sendChatMessage = (message) => {
                 createdAt: new Date()
             })
         }).then(() => {
+            firestore.collection('users').doc(currentUserUid).collection('friends').doc(message.friendId).update({
+                lastMessage: message.content
+            })
+        }).then(() => {
+            firestore.collection('users').doc(message.friendId).collection('friends').doc(currentUserUid).update({
+                lastMessage: message.content
+            })
+        }).then(() => {
             dispatch({ type: "SEND_MESSAGE_SUCCESS" });
         }).catch((error) => {
-            dispatch({type: "SEND_MESSAGE_ERROR", error: error})
+            dispatch({ type: "SEND_MESSAGE_ERROR", error: error })
         })
     }
 }
